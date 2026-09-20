@@ -1,5 +1,5 @@
-/* Supabase 配置 — 部署后填入你的项目凭证 */
+/* Supabase 配置 */
 window.SUPABASE_CONFIG = {
-  url: "",        // 例如 "https://xxxxx.supabase.co"
-  anonKey: ""     // 例如 "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+  url: "https://wwzagtxcanlafxlzqvzf.supabase.co",
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3emFndHhjYW5sYWZ4bHpxdnpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4Njg1MjMsImV4cCI6MjEwNTQ0NDUyM30.HBy2k2xuJa2h7Z4PtNKATGqY6y84OFKeXnCkQxHL270"
 };
