@@ -11,6 +11,19 @@
   <script src="js/supabase-config.js"></script>
 </head>
 <body>
+  <!-- 密码登录遮罩 -->
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-avatar"></div>
+      <h2 class="auth-title">管理后台</h2>
+      <p class="auth-subtitle">请输入管理密码</p>
+      <input id="authPassword" type="password" class="auth-input" placeholder="管理密码" autocomplete="current-password" />
+      <button id="authSubmit" type="button" class="btn btn--primary auth-submit">登录</button>
+      <p id="authError" class="auth-error"></p>
+      <a href="index.html" class="auth-back">← 返回站点</a>
+    </div>
+  </div>
+
   <header class="admin-topbar">
     <div class="admin-topbar__brand">
       <a href="index.html" class="admin-topbar__back">← 返回站点</a>
@@ -24,6 +37,7 @@
       <label class="btn" for="importFile">导入 JSON</label>
       <input id="importFile" type="file" accept="application/json,.json" hidden />
       <button id="btnReset" type="button" class="btn btn--danger">重置默认</button>
+      <button id="btnPassword" type="button" class="btn">修改密码</button>
     </div>
   </header>
 
