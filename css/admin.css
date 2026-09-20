@@ -2,6 +2,108 @@
    管理后台样式
    =========================================================== */
 
+/* ---------- 密码登录遮罩 ---------- */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at top, #1a1a2e 0%, #07070d 100%);
+}
+.auth-overlay.is-visible { display: flex; }
+
+.auth-card {
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  padding: 40px 32px 32px;
+  background: rgba(20, 20, 35, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 0 60px rgba(168, 85, 247, 0.15), 0 20px 40px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+.auth-avatar {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00f0ff, #a855f7, #ff00aa);
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.5), 0 0 60px rgba(168, 85, 247, 0.3);
+}
+
+.auth-title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 2px;
+}
+
+.auth-subtitle {
+  margin: 0 0 24px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 15px;
+  font-family: var(--font);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.auth-input::placeholder { color: rgba(255, 255, 255, 0.3); }
+.auth-input:focus {
+  outline: none;
+  border-color: rgba(0, 240, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.12);
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #00f0ff, #a855f7, #ff00aa) !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.auth-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35);
+}
+
+.auth-error {
+  min-height: 18px;
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #ff6b8a;
+}
+
+.auth-back {
+  display: inline-block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.auth-back:hover { color: rgba(255, 255, 255, 0.7); }
+
 :root {
   --color-bg: #f5f6f8;
   --color-surface: #ffffff;
