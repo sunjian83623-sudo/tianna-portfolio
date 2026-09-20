@@ -888,17 +888,110 @@
         try { Storage.setConfig(state.config); } catch (e) {}
       }
     });
+
+    // 修改密码按钮
+    bindPasswordChange();
+  }
+
+  // ---------- 密码认证 ----------
+  // 默认密码明文：tianna2026（首次访问时自动写入哈希到云端）
+  var DEFAULT_PASSWORD = "tianna2026";
+
+  async function sha256(text) {
+    var data = new TextEncoder().encode(text);
+    var hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    var arr = Array.from(new Uint8Array(hashBuffer));
+    return arr.map(function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+  }
+
+  function getStoredPasswordHash() {
+    if (state.config && state.config.meta && state.config.meta.adminPasswordHash) {
+      return state.config.meta.adminPasswordHash;
+    }
+    return null;
+  }
+
+  function showAuthOverlay() {
+    var overlay = document.getElementById("authOverlay");
+    var input = document.getElementById("authPassword");
+    var btn = document.getElementById("authSubmit");
+    var err = document.getElementById("authError");
+    overlay.classList.add("is-visible");
+    setTimeout(function () { input.focus(); }, 50);
+
+    var attempting = false;
+    async function tryAuth() {
+      if (attempting) return;
+      var password = input.value;
+      if (!password) { err.textContent = "请输入密码"; return; }
+      attempting = true;
+      btn.textContent = "验证中…";
+      btn.disabled = true;
+      err.textContent = "";
+      try {
+        var inputHash = await sha256(password);
+        var storedHash = getStoredPasswordHash();
+        if (!storedHash) storedHash = await sha256(DEFAULT_PASSWORD);
+        if (inputHash === storedHash) {
+          overlay.classList.remove("is-visible");
+          setTimeout(function () { overlay.style.display = "none"; }, 300);
+          loadEditor();
+        } else {
+          err.textContent = "密码错误，请重试";
+          input.value = "";
+          input.focus();
+        }
+      } catch (e) {
+        err.textContent = "验证失败：" + (e.message || e);
+      } finally {
+        attempting = false;
+        btn.textContent = "登录";
+        btn.disabled = false;
+      }
+    }
+
+    btn.addEventListener("click", tryAuth);
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") tryAuth();
+    });
+  }
+
+  function loadEditor() {
+    state.config = Storage.getConfig();
+    bindActions();
+    renderAll();
+    updateSaveStatus();
+  }
+
+  // ---------- 修改密码 ----------
+  function bindPasswordChange() {
+    document.getElementById("btnPassword").addEventListener("click", async function () {
+      var newPass = prompt("请输入新密码（至少 6 位）：");
+      if (newPass == null) return;
+      if (newPass.length < 6) { toast("密码至少 6 位", "error"); return; }
+      var confirmPass = prompt("请再次输入新密码确认：");
+      if (confirmPass !== newPass) { toast("两次输入不一致", "error"); return; }
+      var hash = await sha256(newPass);
+      if (!state.config.meta) state.config.meta = {};
+      state.config.meta.adminPasswordHash = hash;
+      markDirty();
+      toast("密码已修改，请点击「保存」生效", "success");
+    });
   }
 
   // ---------- Init ----------
-  function init() {
+  async function init() {
     // 先初始化 Supabase 拉取远程配置
-    Storage.init().then(function () {
-      state.config = Storage.getConfig();
-      bindActions();
-      renderAll();
-      updateSaveStatus();
-    });
+    await Storage.init();
+    state.config = Storage.getConfig();
+    // 首次访问：若云端没有密码哈希，自动设置默认密码
+    if (!state.config.meta) state.config.meta = {};
+    if (!state.config.meta.adminPasswordHash) {
+      state.config.meta.adminPasswordHash = await sha256(DEFAULT_PASSWORD);
+      try { Storage.setConfig(state.config); } catch (e) {}
+    }
+    // 显示密码遮罩，验证通过后才加载编辑器
+    showAuthOverlay();
   }
 
   if (document.readyState === "loading") {
