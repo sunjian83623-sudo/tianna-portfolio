@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>田娜 · AIGC 作品集</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/site.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-config.js"></script>
+</head>
+<body>
+  <div id="app" class="app">
+    <div class="loading">加载中…</div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    (function () {
+      function render() {
+        var config = Storage.getConfig();
+        Storage.resolveConfig(config).then(function (resolved) {
+          SiteRenderer.renderAll(resolved, document.getElementById("app"));
+        }).catch(function (err) {
+          console.error("render failed", err);
+          document.getElementById("app").innerHTML =
+            '<div class="loading loading--error">加载失败：' + (err && err.message || err) + "</div>";
+        });
+      }
+      // 启动：先从 Supabase 拉取远程配置，再渲染
+      Storage.init().then(function () {
+        render();
+        // 启动远程轮询，30秒感知管理员更新
+        Storage.startRemotePolling(render, 30000);
+      });
+      // 同源其他标签页（admin）保存后自动刷新
+      window.addEventListener("storage", function (e) {
+        if (e.key === "tianna_site_config_v1") render();
+      });
+    })();
+  </script>
+</body>
+</html>
